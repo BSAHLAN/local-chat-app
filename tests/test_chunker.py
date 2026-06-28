@@ -1,4 +1,13 @@
+import pytest
+
 from naive_rag.chunker import chunk_text
+
+
+def test_overlap_not_smaller_than_size_raises():
+    with pytest.raises(ValueError):
+        chunk_text("some text", chunk_size=100, chunk_overlap=100)
+    with pytest.raises(ValueError):
+        chunk_text("some text", chunk_size=100, chunk_overlap=150)
 
 
 def test_short_text_single_chunk():
