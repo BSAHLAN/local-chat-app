@@ -1,3 +1,4 @@
+import naive_rag.store as store_module
 from naive_rag.store import VectorStore, make_chunk_id
 
 
@@ -44,3 +45,18 @@ def test_query_k_larger_than_count_returns_all(tmp_path):
               metadatas=[{"source_path": "a"}])
     results = store.query([1.0, 0.0], k=10)
     assert len(results) == 1
+
+
+def test_add_splits_into_batches(tmp_path, monkeypatch):
+    # With a tiny max batch, an add larger than one batch must still store
+    # every item (the upsert loop runs multiple times).
+    monkeypatch.setattr(store_module, "_MAX_BATCH", 2)
+    store = VectorStore(str(tmp_path / "db"))
+    n = 5
+    store.add(
+        ids=[str(i) for i in range(n)],
+        embeddings=[[float(i), 0.0] for i in range(n)],
+        documents=[f"doc{i}" for i in range(n)],
+        metadatas=[{"source_path": str(i)} for i in range(n)],
+    )
+    assert store.count() == n

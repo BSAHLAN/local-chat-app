@@ -5,6 +5,10 @@ import hashlib
 
 import chromadb
 
+# ChromaDB rejects a single upsert larger than its internal max (~5461 in
+# 0.5.x). Stay safely under it and split larger adds into multiple batches.
+_MAX_BATCH = 5000
+
 
 def make_chunk_id(source_path: str, chunk_index: int) -> str:
     raw = f"{source_path}:{chunk_index}".encode("utf-8")
@@ -27,12 +31,14 @@ class VectorStore:
     ) -> None:
         if not ids:
             return
-        self._collection.upsert(
-            ids=ids,
-            embeddings=embeddings,
-            documents=documents,
-            metadatas=metadatas,
-        )
+        for start in range(0, len(ids), _MAX_BATCH):
+            end = start + _MAX_BATCH
+            self._collection.upsert(
+                ids=ids[start:end],
+                embeddings=embeddings[start:end],
+                documents=documents[start:end],
+                metadatas=metadatas[start:end],
+            )
 
     def query(self, embedding: list[float], k: int = 5) -> list[dict]:
         n = self.count()

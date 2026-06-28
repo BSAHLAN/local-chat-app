@@ -77,7 +77,9 @@ class RAGPipeline:
     ) -> QueryResult:
         query_vector = self._embedder.embed([question])[0]
         sources = self._store.query(query_vector, k=k)
-        if not generate:
+        # No matches (e.g. empty index): return gracefully without calling the
+        # LLM — avoids a crash when Ollama is down and avoids ungrounded answers.
+        if not generate or not sources:
             return QueryResult(answer="", sources=sources)
         contexts = [s["document"] for s in sources]
         answer = self._generator.generate(question, contexts)

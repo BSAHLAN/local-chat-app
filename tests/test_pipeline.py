@@ -94,3 +94,15 @@ def test_query_generate_false_skips_generator(tmp_path):
     result = pipe.query("question?", generate=False)
     assert result.answer == ""
     gen.generate.assert_not_called()
+
+
+def test_query_empty_index_returns_gracefully_without_generator(tmp_path):
+    # No documents indexed: query must return an empty answer + empty sources
+    # and must NOT call the generator (so it never crashes when Ollama is down).
+    gen = MagicMock()
+    pipe = _make_pipeline(tmp_path, generator=gen)
+
+    result = pipe.query("question?", generate=True)
+    assert result.answer == ""
+    assert result.sources == []
+    gen.generate.assert_not_called()
