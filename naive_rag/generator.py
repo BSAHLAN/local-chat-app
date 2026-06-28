@@ -41,4 +41,5 @@ class Generator:
                 "('ollama serve') and the model is pulled "
                 f"('ollama pull {self.model}'). Original error: {exc}"
             ) from exc
-        return response["message"]["content"]
+        # ollama returns a typed ChatResponse; use attribute access.
+        return response.message.content
