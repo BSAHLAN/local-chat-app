@@ -1,3 +1,4 @@
+import logging
 from unittest.mock import MagicMock
 
 from naive_rag.pipeline import RAGPipeline, QueryResult
@@ -54,14 +55,20 @@ def test_index_walks_subfolders_and_attaches_metadata(tmp_path):
         assert "source_path" in m and "folder" in m and "chunk_index" in m
 
 
-def test_index_skips_unreadable_file(tmp_path):
+def test_index_skips_unreadable_file(tmp_path, caplog):
     (tmp_path / "good.txt").write_text("ok", encoding="utf-8")
+    # A .pdf is a SUPPORTED extension, so the loader is invoked and raises on
+    # this garbage content (PdfStreamError). The pipeline must catch it, log a
+    # warning, and continue — exercising the except branch, not the None branch.
     (tmp_path / "bad.pdf").write_bytes(b"not a real pdf")
 
     pipe = _make_pipeline(tmp_path)
-    # bad.pdf will raise inside load_file; index must continue
-    n = pipe.index(str(tmp_path))
-    assert n == 1
+    with caplog.at_level(logging.WARNING, logger="naive_rag.pipeline"):
+        n = pipe.index(str(tmp_path))
+
+    assert n == 1  # only good.txt indexed; bad.pdf skipped, run not aborted
+    # Prove the exception/logging path ran (not the silent unsupported-None path).
+    assert any("bad.pdf" in r.message for r in caplog.records)
 
 
 def test_query_generate_true_calls_generator(tmp_path):

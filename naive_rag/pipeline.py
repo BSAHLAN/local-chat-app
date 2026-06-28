@@ -65,7 +65,7 @@ class RAGPipeline:
                     metadatas.append({
                         "source_path": path,
                         "filename": name,
-                        "folder": os.path.dirname(path),
+                        "folder": root,
                         "chunk_index": i,
                     })
 
