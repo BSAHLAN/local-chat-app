@@ -35,11 +35,12 @@ class VectorStore:
         )
 
     def query(self, embedding: list[float], k: int = 5) -> list[dict]:
-        if self.count() == 0:
+        n = self.count()
+        if n == 0:
             return []
         res = self._collection.query(
             query_embeddings=[embedding],
-            n_results=min(k, self.count()),
+            n_results=min(k, n),
         )
         docs = res["documents"][0]
         metas = res["metadatas"][0]

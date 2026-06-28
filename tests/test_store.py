@@ -29,8 +29,18 @@ def test_add_is_idempotent_on_same_id(tmp_path):
     store.add(ids=["1"], embeddings=[[1.0, 0.0]], documents=["v2"],
               metadatas=[{"source_path": "a"}])
     assert store.count() == 1
+    # upsert replaces the value, not just avoids a duplicate
+    assert store.query([1.0, 0.0], k=1)[0]["document"] == "v2"
 
 
 def test_query_empty_store_returns_empty(tmp_path):
     store = VectorStore(str(tmp_path / "db"))
     assert store.query([1.0, 0.0], k=5) == []
+
+
+def test_query_k_larger_than_count_returns_all(tmp_path):
+    store = VectorStore(str(tmp_path / "db"))
+    store.add(ids=["1"], embeddings=[[1.0, 0.0]], documents=["only"],
+              metadatas=[{"source_path": "a"}])
+    results = store.query([1.0, 0.0], k=10)
+    assert len(results) == 1
