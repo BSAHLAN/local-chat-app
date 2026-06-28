@@ -6,7 +6,7 @@ of files and ask questions about them — no API keys, everything runs locally.
 ## Stack
 - **Embeddings:** sentence-transformers (`all-MiniLM-L6-v2`)
 - **Vector store:** ChromaDB (persistent, on disk)
-- **LLM:** Ollama (`llama3.2` by default)
+- **LLM:** Ollama (`gemma3:4b` by default)
 
 ## Setup
 
@@ -17,7 +17,7 @@ python3 -m venv venv
 venv/bin/pip install -r requirements.txt
 
 # Install Ollama from https://ollama.com, then:
-ollama pull llama3.2
+ollama pull gemma3:4b
 ollama serve   # if not already running
 ```
 

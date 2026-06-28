@@ -20,7 +20,7 @@ def build_prompt(question: str, contexts: list[str]) -> str:
 
 class Generator:
     def __init__(
-        self, model: str = "llama3.2", host: str = "http://localhost:11434"
+        self, model: str = "gemma3:4b", host: str = "http://localhost:11434"
     ) -> None:
         self.model = model
         self._client = ollama.Client(host=host)

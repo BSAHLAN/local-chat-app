@@ -1,4 +1,4 @@
-"""Minimal end-to-end example. Requires Ollama running with llama3.2 pulled."""
+"""Minimal end-to-end example. Requires Ollama running with gemma3:4b pulled."""
 from pathlib import Path
 
 from naive_rag import RAGPipeline

@@ -25,7 +25,7 @@ class RAGPipeline:
         self,
         persist_dir: str = ".rag_db",
         embed_model: str = "all-MiniLM-L6-v2",
-        llm_model: str = "llama3.2",
+        llm_model: str = "gemma3:4b",
         chunk_size: int = 800,
         chunk_overlap: int = 150,
         embedder: Embedder | None = None,
