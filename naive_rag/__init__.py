@@ -1,0 +1,1 @@
+"""Naive local RAG pipeline."""
