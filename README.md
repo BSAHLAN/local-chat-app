@@ -11,6 +11,9 @@ of files and ask questions about them — no API keys, everything runs locally.
 ## Setup
 
 ```bash
+# Create the virtual environment (first time only)
+python3 -m venv venv
+
 venv/bin/pip install -r requirements.txt
 
 # Install Ollama from https://ollama.com, then:
