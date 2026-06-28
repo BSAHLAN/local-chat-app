@@ -15,5 +15,8 @@ def test_embed_returns_one_vector_per_text():
 
 def test_model_loaded_lazily():
     with patch("naive_rag.embedder.SentenceTransformer") as ctor:
-        Embedder("fake-model")
-        ctor.assert_not_called()  # not loaded until first embed
+        emb = Embedder("fake-model")
+        ctor.assert_not_called()  # not loaded at construction
+        ctor.return_value.encode.return_value = [[0.1]]
+        emb.embed(["x"])
+        ctor.assert_called_once()  # loaded on first embed
