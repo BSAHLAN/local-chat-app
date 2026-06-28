@@ -30,9 +30,12 @@ def test_generate_calls_ollama_and_returns_text():
         out = gen.generate("q?", ["ctx"])
     assert out == "answer!"
     fake_client.chat.assert_called_once()
-    # The grounding system instruction must be sent.
+    # The grounding system instruction must be sent and tell the model to
+    # answer using ONLY the provided context.
     sent_messages = fake_client.chat.call_args.kwargs["messages"]
-    assert any(m["role"] == "system" for m in sent_messages)
+    system_messages = [m for m in sent_messages if m["role"] == "system"]
+    assert system_messages
+    assert "ONLY" in system_messages[0]["content"]
 
 
 def test_generate_raises_actionable_error_on_connection_failure():
