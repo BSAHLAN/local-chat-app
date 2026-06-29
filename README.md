@@ -57,3 +57,7 @@ venv/bin/python -m pytest
 
 See [`docs/blog-explainer.md`](docs/blog-explainer.md) for an end-to-end
 walkthrough of the pipeline's design.
+
+## License
+
+[MIT](LICENSE)
